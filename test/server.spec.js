@@ -15,43 +15,105 @@ beforeEach(function(done){
   });
 });
 
+function sendMessage(msg, cb){
+  var buffer = new Buffer('${0}*\n'.replace('{0}', msg));
+  if (cb){
+    client.send(buffer, 0, buffer.length, config.port, config.address, cb);
+  } else {
+    client.send(buffer, 0, buffer.length, config.port, config.address);
+  }
+}
 
 describe('API tests', function(){
   describe('Recieve CHECK', function(){
     it('should return greetings message', function(done){
       client.on('message', function(msg){
-        msg.toString().should.eql('Hello from QuickBot');
+        msg.toString().should.eql('Hello from QuickBot\n');
         done();
       });
 
-      var msg = new Buffer('CHECK');
-      client.send(msg, 0, msg.length, config.port, config.address);
+     sendMessage('CHECK');
     });
   });
 
-  describe('Recieve PWM', function(){
+  describe('Recieve PWM?', function(){
     it('should return PWM values', function(done){
       client.on('message', function(msg){
-        msg.toString().should.eql('[100, -100]');
+        msg.toString().should.eql('[100,-100]\n');
         done();
       });
 
-      var msg = new Buffer('PWM');
-      client.send(msg, 0, msg.length, config.port, config.address);
+      sendMessage('PWM?');
+    });
+  });
+
+  describe('Recieve IRVAL?', function(){
+    it('should return IRVAL values', function(done){
+      client.on('message', function(msg){
+        msg.toString().should.eql('[1,2,3,4,5]\n');
+        done();
+      });
+
+      sendMessage('IRVAL?');
+    });
+  });
+
+  describe('Recieve ENVAL?', function(){
+    it('should return ENVAL values', function(done){
+      client.on('message', function(msg){
+        msg.toString().should.eql('[200,-200]\n');
+        done();
+      });
+
+      sendMessage('ENVAL?');
+    });
+  });
+
+   describe('Recieve ENVEL?', function(){
+    it('should return encoder velocity', function(done){
+      client.on('message', function(msg){
+        msg.toString().should.eql('[20,-20]\n');
+        done();
+      });
+
+      sendMessage('ENVEL?');
+    });
+  });
+
+  describe('Recieve RESET', function(){
+    it('should reset encoder position to zero', function(done){
+      client.on('message', function(msg){
+        msg.toString().should.eql('[0,0]\n');
+        done();
+      });
+
+      sendMessage('RESET');
+      sendMessage('ENVAL?');
     });
   });
 
   describe('Recieve PWM=[values]', function(){
     it('should set PWM values', function(done){
       client.on('message', function(msg){
-        msg.toString().should.eql('[50, -50]');
+        msg.toString().should.eql('[50,-50]\n');
         done();
       });
-      var msgSet = new Buffer('PWM=[50, -50]');
-      client.send(msgSet, 0, msgSet.length, config.port, config.address, function(){
-        var msgGet = new Buffer('PWM');
-        client.send(msgGet, 0, msgGet.length, config.port, config.address);
+      sendMessage('PWM=[50,-50]');
+      sendMessage('PWM?');
+    });
+  });
+
+  describe('Recieve END', function(){
+    it('should end program', function(done){
+      client.on('message', function(){
+        done(false);
       });
+
+      sendMessage('END', function(){
+        sendMessage('PWM?');
+      });
+      setTimeout(done, 100);
+
     });
   });
 });
