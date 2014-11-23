@@ -1,5 +1,5 @@
 {
   "node": true,
   "strict": false,
-  "globals": ["describe", "it", "before"]
+  "globals": ["describe", "it", "before", "beforeEach", "after", "afterEach"]
 }

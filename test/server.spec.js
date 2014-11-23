@@ -1,9 +1,10 @@
 var config = require('../config');
 var dgram = require('dgram');
 
-var client = dgram.createSocket('udp4');
+var client;
 
-before(function(done){
+beforeEach(function(done){
+  client = dgram.createSocket('udp4');
   client.on('error', function (err){
     console.log('client error:\n' + err.stack);
     client.close();
@@ -25,6 +26,32 @@ describe('API tests', function(){
 
       var msg = new Buffer('CHECK');
       client.send(msg, 0, msg.length, config.port, config.address);
+    });
+  });
+
+  describe('Recieve PWM', function(){
+    it('should return PWM values', function(done){
+      client.on('message', function(msg){
+        msg.toString().should.eql('[100, -100]');
+        done();
+      });
+
+      var msg = new Buffer('PWM');
+      client.send(msg, 0, msg.length, config.port, config.address);
+    });
+  });
+
+  describe('Recieve PWM=[values]', function(){
+    it('should set PWM values', function(done){
+      client.on('message', function(msg){
+        msg.toString().should.eql('[50, -50]');
+        done();
+      });
+      var msgSet = new Buffer('PWM=[50, -50]');
+      client.send(msgSet, 0, msgSet.length, config.port, config.address, function(){
+        var msgGet = new Buffer('PWM');
+        client.send(msgGet, 0, msgGet.length, config.port, config.address);
+      });
     });
   });
 });
