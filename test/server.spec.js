@@ -19,7 +19,7 @@ describe('API tests', function(){
   describe('Recieve CHECK', function(){
     it('should return greetings message', function(done){
       client.on('message', function(msg){
-        msg.toString().should.equal('Hello from QuickBot');
+        msg.toString().should.eql('Hello from QuickBot');
         done();
       });
 
