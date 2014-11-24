@@ -3,6 +3,8 @@ var config = require('./config');
 
 var server = dgram.createSocket('udp4');
 
+module.exports = server;
+
 server.on('error', function (err){
   console.log('server error:\n' + err.stack);
   server.close();
@@ -15,13 +17,6 @@ server.on('listening', function () {
   console.log('server listening ' +
       address.address + ':' + address.port);
 });
-
-var leftPwm = 100;
-var rightPwm = -100;
-var leftEncoderPosition = 200;
-var rightEncoderPosition = -200;
-var leftEncoderVelocity = 20;
-var rightEncoderVelocity = -20;
 
 var msgFormat = '${0}*';
 
@@ -39,9 +34,10 @@ server.on('message', function(msg, rInfo){
     } 
     break;
     case msgFormat.replace('{0}', 'PWM?'): {
+      var speed = server.robot.getSpeed();
       sendMessage('[{0},{1}]'
-        .replace('{0}', leftPwm)
-        .replace('{1}', rightPwm));
+        .replace('{0}', speed.left)
+        .replace('{1}', speed.right));
     }
     break;
     case msgFormat.replace('{0}', 'IRVAL?'): {
@@ -49,20 +45,21 @@ server.on('message', function(msg, rInfo){
     }
     break;
     case msgFormat.replace('{0}', 'ENVAL?'): {
+      var encoderPosition = server.robot.getEncoderPosition();
       sendMessage('[{0},{1}]'
-        .replace('{0}', leftEncoderPosition)
-        .replace('{1}', rightEncoderPosition));
+        .replace('{0}', encoderPosition.left)
+        .replace('{1}', encoderPosition.right));
     }
     break;
     case msgFormat.replace('{0}', 'ENVEL?'): {
+      var encoderVelocity = server.robot.getEncoderVelocity();
       sendMessage('[{0},{1}]'
-        .replace('{0}', leftEncoderVelocity)
-        .replace('{1}', rightEncoderVelocity));
+        .replace('{0}', encoderVelocity.left)
+        .replace('{1}', encoderVelocity.right));
     }
     break;
     case msgFormat.replace('{0}', 'RESET'): {
-      leftEncoderPosition = 0;
-      rightEncoderPosition = 0;
+      server.robot.resetEncoderPosition();
     }
     break;
     case msgFormat.replace('{0}', 'END'): {
@@ -76,8 +73,9 @@ server.on('message', function(msg, rInfo){
   if (msgUpper.lastIndexOf('$PWM=[') === 0){
     var msgSplitted = msgUpper.split(/[\[\],]+/);
     if (msgSplitted.length === 4){
-      leftPwm = parseFloat(msgSplitted[1].trim());
-      rightPwm = parseFloat(msgSplitted[2].trim());
+      var leftPwm = parseFloat(msgSplitted[1].trim());
+      var rightPwm = parseFloat(msgSplitted[2].trim());
+      server.robot.setSpeed(leftPwm, rightPwm);
     } else {
       console.log('cmd PWM set has incorrect format: ', msgUpper);
     }
@@ -93,4 +91,3 @@ function sendMessage(msg){
       });
 }
 
-module.exports = server;

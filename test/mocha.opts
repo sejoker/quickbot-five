@@ -2,6 +2,5 @@
 --colors
 --timeout 2000
 --require should
---require ./server
 --recursive
 --ui bdd

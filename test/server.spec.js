@@ -1,4 +1,8 @@
 var config = require('../config');
+var server = require('../server');
+var mock = require('./quickbot.mock');
+server.robot = mock;
+
 var dgram = require('dgram');
 
 var client;

@@ -87,7 +87,7 @@ Quickbot.prototype.updateVelocity = function(){
   setTimeout(loop, 1000);
 };
 
-Quickbot.prototype.updateMotorSpeed = function(leftPwm, rightPwm) {
+Quickbot.prototype.setSpeed = function(leftPwm, rightPwm) {
   var leftSpeed = convertFromPWM(leftPwm); 
   var rightSpeed = convertFromPWM(rightPwm);
   var self = this;
@@ -110,6 +110,26 @@ Quickbot.prototype.updateMotorSpeed = function(leftPwm, rightPwm) {
   updateSingleMotor('left', leftSpeed);
   updateSingleMotor('right', rightSpeed);
 
+};
+
+Quickbot.prototype.getEncoderPosition = function(){
+  return this.encoderPosition;
+};
+
+Quickbot.prototype.resetEncoderPosition = function(){
+  this.encoderPosition.left = 0;
+  this.encoderPosition.right = 0;
+};
+
+Quickbot.prototype.getEncoderVelocity = function(){
+  return this.encoderVelocity;
+};
+
+Quickbot.prototype.getSpeed = function(){
+  return {
+    left: convertToPWM(this.motorSpeed.left),
+    right: convertToPWM(this.motorSpeed.right)
+  };
 };
 
 function convertFromPWM(value){
