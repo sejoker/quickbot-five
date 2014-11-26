@@ -20,6 +20,8 @@ address)
 
 - set BASE and ROBOT IP and PORT in config.js
 
+- npm start
+
 ## Command Set
 
 * Check that the bot is up and running:
