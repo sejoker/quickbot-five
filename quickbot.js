@@ -7,6 +7,7 @@ var WHEEL_RADIUS = 3.25;  // cm
 var TIME_INTERVAL = 1;  // seconds
 var TICKS = 16;  // ticks per revolution
 var CONST = (2 * Math.PI * WHEEL_RADIUS)/TICKS;
+var MAX_DISTANCE = 350; // cm
 
 function Quickbot(){
   // motor's speed
@@ -37,11 +38,25 @@ function Quickbot(){
     right: 0
   };
 
+  // sensor distances
+  this.sensorDistances = {
+    //back left
+    bl: 0,
+    // forward left
+    fl: 0,
+    // forward middle
+    fm: 0,
+    // forward right
+    fr: 0,
+    // back right
+    br: 0
+  };
+
   var board = new five.Board();
   var self = this;
 
   board.on('ready', function(){
-
+    console.log('board connected');
     var motors = {
       left: new five.Motor([3, 12]),
       right: new five.Motor([11, 13])
@@ -55,6 +70,12 @@ function Quickbot(){
 
     self.updateEncoder(10, 'left');// left
     self.updateEncoder(4, 'right'); // right
+
+    connectSensor(5, self.sensorDistances, 'bl');
+    connectSensor(6, self.sensorDistances, 'fl');
+    connectSensor(8, self.sensorDistances, 'fm');
+    connectSensor(11, self.sensorDistances, 'fr');
+    connectSensor(12, self.sensorDistances, 'br');
   });
 }
 
@@ -109,7 +130,15 @@ Quickbot.prototype.setSpeed = function(leftPwm, rightPwm) {
 
   updateSingleMotor('left', leftSpeed);
   updateSingleMotor('right', rightSpeed);
+};
 
+Quickbot.prototype.getSensorDistances = function(){
+  return [2,2,2,2,2];
+  // return [this.sensorDistances.bl,
+  //         this.sensorDistances.fl,
+  //         this.sensorDistances.fm,
+  //         this.sensorDistances.fr,
+  //         this.sensorDistances.br];
 };
 
 Quickbot.prototype.getEncoderPosition = function(){
@@ -138,4 +167,14 @@ function convertFromPWM(value){
 
 function convertToPWM(value){
   return value / 2.55;
+}
+
+function connectSensor(pin, sensorDistances, sensorId){
+  var ping = new five.Ping(pin);
+  ping.on('data', function(err) {
+    //console.log("id: ", pin, "Distance: " + this.cm + " cm");
+    if (!err && this.cm < MAX_DISTANCE){
+      sensorDistances[sensorId] = (this.cm / 100).toFixed(2);
+    }
+  });
 }

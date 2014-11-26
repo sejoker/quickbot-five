@@ -31,5 +31,8 @@ module.exports = {
     console.log('set speed: ', left, right);
     this.leftPwm = left;
     this.rightPwm = right;
+  },
+  getSensorDistances: function(){
+    return [1,2,3,4,5];
   }
 };

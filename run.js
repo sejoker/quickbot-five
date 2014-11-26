@@ -1,3 +1,3 @@
-var QuickBot = require('./quickbot');
+var Quickbot = require('./quickbot');
 var server = require('./server');
-server.robot = new QuickBot();
+server.robot = new Quickbot();

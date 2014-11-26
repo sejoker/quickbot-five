@@ -14,7 +14,7 @@ beforeEach(function(done){
     client.close();
   });
 
-  client.bind(config.destinationPort, config.destinationAddress, function(){
+  client.bind(config.basePort, config.baseAddress, function(){
     done();
   });
 });
@@ -22,9 +22,9 @@ beforeEach(function(done){
 function sendMessage(msg, cb){
   var buffer = new Buffer('${0}*\n'.replace('{0}', msg));
   if (cb){
-    client.send(buffer, 0, buffer.length, config.port, config.address, cb);
+    client.send(buffer, 0, buffer.length, config.robotPort, config.robotAddress, cb);
   } else {
-    client.send(buffer, 0, buffer.length, config.port, config.address);
+    client.send(buffer, 0, buffer.length, config.robotPort, config.robotAddress);
   }
 }
 
@@ -103,7 +103,7 @@ describe('API tests', function(){
         done();
       });
       sendMessage('PWM=[50,-50]');
-      sendMessage('PWM?');
+      setTimeout(sendMessage, 100, 'PWM?');
     });
   });
 

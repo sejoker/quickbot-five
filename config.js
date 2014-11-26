@@ -1,6 +1,6 @@
 module.exports = {
-  port: 5005,
-  address: 'localhost',
-  destinationAddress: 'localhost',
-  destinationPort: 5006
+  robotAddress: 'localhost',
+  baseAddress: 'localhost',
+  robotPort: 5005,
+  basePort: 5006
 };

@@ -10,7 +10,7 @@ server.on('error', function (err){
   server.close();
 });
 
-server.bind(config.port, config.address);
+server.bind(config.robotPort, config.robotAddress);
 
 server.on('listening', function () {
   var address = server.address();
@@ -41,7 +41,7 @@ server.on('message', function(msg, rInfo){
     }
     break;
     case msgFormat.replace('{0}', 'IRVAL?'): {
-      sendMessage('[1,2,3,4,5]');
+      sendMessage('[{0}]'.replace('{0}', server.robot.getSensorDistances().toString()));
     }
     break;
     case msgFormat.replace('{0}', 'ENVAL?'): {
@@ -84,10 +84,10 @@ server.on('message', function(msg, rInfo){
 
 function sendMessage(msg){
   var responseMsg = new Buffer(msg + '\n');
-      server.send(responseMsg, 0, responseMsg.length, config.destinationPort, config.destinationAddress, function(){
+      server.send(responseMsg, 0, responseMsg.length, config.basePort, config.baseAddress, function(){
         console.log(responseMsg.toString(), ' message sent to {0}:{1}'
-          .replace('{0}', config.destinationAddress)
-          .replace('{1}', config.destinationPort));
+          .replace('{0}', config.baseAddress)
+          .replace('{1}', config.basePort));
       });
 }
 

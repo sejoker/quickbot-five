@@ -2,7 +2,7 @@
   "name": "quickbot-five",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "run.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha"
   },
@@ -11,5 +11,8 @@
   "devDependencies": {
     "mocha": "^2.0.1",
     "should": "^4.3.0"
+  },
+  "dependencies": {
+    "johnny-five": "^0.8.29"
   }
 }
