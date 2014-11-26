@@ -1,5 +1,5 @@
 
-This is the code that runs on the Arduino to control a robot.
+This is the code that runs on the Arduino to control the robot using [Johnny-Five](https://github.com/rwaldron/johnny-five). Based on the work from [quickbot_bbb](https://github.com/o-botics/quickbot_bbb) that uses BeagleBone Black to control the robot.
 
 ## Overview
 Essentially this code establishes socket (UDP) connection with another device
@@ -48,19 +48,10 @@ address)
     "$PWM=[-100,100]*\n"
 
 
-* Get IR values:
+* Get sensor values:
   * Command
 
     "$IRVAL?*\n"
-
-  * Example response
-
-    "[800, 810, 820, 830, 840]\n"
-
-* Get Ultra values:
-  * Command
-
-    "$ULTRAVAL?*\n"
 
   * Example response
 
